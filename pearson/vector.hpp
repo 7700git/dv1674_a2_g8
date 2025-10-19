@@ -4,6 +4,7 @@ Author: David Holmqvist <daae19@student.bth.se>
 
 #if !defined(VECTOR_HPP)
 #define VECTOR_HPP
+#include <cstddef>
 
 class Vector {
 private:
@@ -15,18 +16,22 @@ public:
     Vector(unsigned size);
     Vector(unsigned size, double* data);
     Vector(const Vector& other);
+    Vector(Vector&& other) noexcept;              // move ctor
+    Vector& operator=(const Vector& other);       // copy assign
+    Vector& operator=(Vector&& other) noexcept;   // move assign
     ~Vector();
 
     double magnitude() const;
     double mean() const;
     double normalize() const;
-    double dot(Vector rhs) const;
+    //to avoid multiple copy
+    double dot(const Vector& rhs) const;
 
     unsigned get_size() const;
     double* get_data();
-
-    Vector operator/(double div);
-    Vector operator-(double sub);
+//adding const
+    Vector operator/(double div) const;
+    Vector operator-(double sub) const;
     double operator[](unsigned i) const;
     double& operator[](unsigned i);
 };

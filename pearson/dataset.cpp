@@ -40,7 +40,8 @@ namespace Dataset
             std::copy_n(std::istream_iterator<double>{ss},
                         dimension,
                         new_vec.get_data());
-            result.push_back(new_vec);
+            //result.push_back(new_vec);
+            result.push_back(std::move(new_vec));
         }
 
         return result;

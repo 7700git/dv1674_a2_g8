@@ -11,12 +11,17 @@ Author: David Holmqvist <daae19@student.bth.se>
 
 namespace Analysis {
 
-std::vector<double> correlation_coefficients(std::vector<Vector> datasets)
+std::vector<double> correlation_coefficients(const std::vector<Vector> datasets)
 {
     std::vector<double> result {};
 
-    for (auto sample1 { 0 }; sample1 < datasets.size() - 1; sample1++) {
-        for (auto sample2 { sample1 + 1 }; sample2 < datasets.size(); sample2++) {
+
+    // Reserve capacity: number of unique pairs = n*(n-1)/2
+    auto n = datasets.size();
+    if (n > 1) result.reserve(n * (n - 1) / 2);
+
+    for (auto sample1 { 0u }; sample1 < datasets.size() - 1; sample1++) {
+        for (auto sample2 { sample1 + 1u }; sample2 < datasets.size(); ++sample2) {
             auto corr { pearson(datasets[sample1], datasets[sample2]) };
             result.push_back(corr);
         }
@@ -25,7 +30,7 @@ std::vector<double> correlation_coefficients(std::vector<Vector> datasets)
     return result;
 }
 
-double pearson(Vector vec1, Vector vec2)
+double pearson(const Vector& vec1, const Vector& vec2)
 {
     auto x_mean { vec1.mean() };
     auto y_mean { vec2.mean() };
@@ -36,6 +41,11 @@ double pearson(Vector vec1, Vector vec2)
     auto x_mag { x_mm.magnitude() };
     auto y_mag { y_mm.magnitude() };
 
+     // Protect against division by zero (maintain original behavior decision)
+    if (x_mag == 0.0 || y_mag == 0.0) {
+        return 0.0;
+    }
+    
     auto x_mm_over_x_mag { x_mm / x_mag };
     auto y_mm_over_y_mag { y_mm / y_mag };
 
