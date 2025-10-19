@@ -29,10 +29,11 @@ namespace Filter
 	//move the weight calc to outside of nested loops to exponentially decrease calls to this function
         double w[Gauss::max_radius]{};
         Gauss::get_weights(radius, w);
+	//the loops are based on scanning columns first which uses more cache, hence flipping the loop inside out is more efficient
 
-        for (auto x{0}; x < dst.get_x_size(); x++)
+        for (auto y{0}; y < dst.get_y_size(); y++)
         {
-            for (auto y{0}; y < dst.get_y_size(); y++)
+            for (auto x{0}; x < dst.get_x_size(); x++)
             {
 
                 // unsigned char Matrix::r(unsigned x, unsigned y) const
@@ -70,10 +71,10 @@ namespace Filter
 	//same alteration in these loops as above
         double w[Gauss::max_radius]{};
         Gauss::get_weights(radius, w);
-
-        for (auto x{0}; x < dst.get_x_size(); x++)
+	//same change as above, flipping the loop matrix inside out
+        for (auto y{0}; y < dst.get_y_size(); y++)
         {
-            for (auto y{0}; y < dst.get_y_size(); y++)
+            for (auto x{0}; x < dst.get_x_size(); x++)
             {
 
                 auto r{w[0] * scratch.r(x, y)}, g{w[0] * scratch.g(x, y)}, b{w[0] * scratch.b(x, y)}, n{w[0]};
